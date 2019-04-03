@@ -1,0 +1,21 @@
+{
+  "name": "@freelog/catalogue-parser",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "freelog",
+    "parser",
+    "catalogue",
+    "@freelog"
+  ],
+  "author": "zechengdai",
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^6.0.2",
+    "should": "^13.2.3"
+  }
+}
