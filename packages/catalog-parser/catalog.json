@@ -1,0 +1,76 @@
+[
+  {
+    "indent": 0,
+    "value": "T1:1111110",
+    "children": [
+      {
+        "indent": 4,
+        "value": "T1-1:111111"
+      },
+      {
+        "indent": 4,
+        "value": "T1-2:111112",
+        "children": [
+          {
+            "indent": 6,
+            "value": "T1-2-1:21111110"
+          },
+          {
+            "indent": 6,
+            "value": "T1-2-2:22222221",
+            "children": [
+              {
+                "indent": 8,
+                "value": "T1-2-3:22222221"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "indent": 4,
+        "value": "T1-3:1111113"
+      }
+    ]
+  },
+  {
+    "indent": 0,
+    "value": "T2",
+    "children": [
+      {
+        "indent": 4,
+        "value": "T2-1:222222333"
+      }
+    ]
+  },
+  {
+    "indent": 0,
+    "value": "T3:333331"
+  },
+  {
+    "indent": 0,
+    "value": "T4:41111",
+    "children": [
+      {
+        "indent": 4,
+        "value": "T4-1:88888",
+        "children": [
+          {
+            "indent": 8,
+            "value": "T4-1-1:888881"
+          }
+        ]
+      },
+      {
+        "indent": 4,
+        "value": "T4-2",
+        "children": [
+          {
+            "indent": 8,
+            "value": "T4-2-1:888888111"
+          }
+        ]
+      }
+    ]
+  }
+]

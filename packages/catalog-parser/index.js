@@ -1,5 +1,5 @@
-
 const tab2space = 4
+
 function parseLine(line, options) {
   line = line.replace(/^([\s\t])*/g, function (match) {
     return match.replace(/\t/g, tab2space)
@@ -19,8 +19,7 @@ function parseLine(line, options) {
   }
 }
 
-function catalogParser(text, options) {
-  var lines = text.split('\n')
+function parseLines(lines, options) {
   var stack = []
   var result = []
   var currentIndent = 0
@@ -33,17 +32,18 @@ function catalogParser(text, options) {
     } else if (currentLine.indent > currentIndent) {
       currentIndent = currentLine.indent
       stack.push(currentLine)
+      result.push(currentLine)
     } else if (indentTokenCaches[currentLine.indent]) {
       let token = stack.pop()
       while (token && token.indent > currentLine.indent) {
         currentIndent = token.indent
-        result.push(token)
         token = stack.pop()
       }
 
       if (token) {
         stack.push(token)
         stack.push(currentLine)
+        result.push(currentLine)
       } else {
         result.push(currentLine)
       }
@@ -54,6 +54,39 @@ function catalogParser(text, options) {
   })
 
   return result
+}
+
+function markLevelForLines(linesInfo) {
+  var curLevel = 0
+  var root = []
+  var curNode = null
+  var queue = []
+
+  linesInfo.forEach(lineInfo => {
+    if (lineInfo.indent === 0) {
+      root.push(lineInfo)
+    } else if (lineInfo.indent <= curNode.indent) {
+      while ((curLevel = queue.pop()) && lineInfo.indent <= curLevel.indent) {
+      }
+      queue.push(curLevel)
+      curLevel.children = curLevel.children || []
+      curLevel.children.push(lineInfo)
+    } else if (lineInfo.indent > curNode.indent) {
+      curNode.children = curNode.children || []
+      curNode.children.push(lineInfo)
+    }
+    curNode = lineInfo
+    queue.push(lineInfo)
+  })
+
+  return root
+}
+
+function catalogParser(text, options) {
+  var lines = text.split('\n')
+  var linesInfo = parseLines(lines)
+  console.log(linesInfo)
+  return markLevelForLines(linesInfo)
 }
 
 module.exports = catalogParser
