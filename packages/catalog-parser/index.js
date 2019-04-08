@@ -6,6 +6,7 @@ function parseLine(line, options) {
   })
   var reg = /^(\s*)([^\s]+)/
   var $$ = reg.exec(line)
+
   if (!$$[1]) {
     return {
       indent: 0,
@@ -26,54 +27,72 @@ function parseLines(lines, options) {
   var indentTokenCaches = {}
 
   lines.forEach(line => {
+    if (!line.trim()) return
+
     var currentLine = parseLine(line, options)
     if (currentLine.indent === currentIndent) {
-      result.push(currentLine)
+      // result.push(currentLine)
     } else if (currentLine.indent > currentIndent) {
-      currentIndent = currentLine.indent
       stack.push(currentLine)
-      result.push(currentLine)
     } else if (indentTokenCaches[currentLine.indent]) {
-      let token = stack.pop()
-      while (token && token.indent > currentLine.indent) {
-        currentIndent = token.indent
-        token = stack.pop()
+      let token
+      while ((token = stack.pop()) && token.indent > currentLine.indent) {
       }
 
       if (token) {
         stack.push(token)
         stack.push(currentLine)
-        result.push(currentLine)
-      } else {
-        result.push(currentLine)
       }
     } else {
       throw new Error(`error indent: ${line}`)
     }
+
+    if (currentLine.indent === 0) indentTokenCaches = {}
+    result.push(currentLine)
+    currentIndent = currentLine.indent
     indentTokenCaches[currentLine.indent] = true
   })
 
   return result
 }
 
-function markLevelForLines(linesInfo) {
+
+function wraplineIntoNode(line) {
+  const value = line.value
+  var lastIndex = value.lastIndexOf(':')
+  var node = {}
+
+  if (lastIndex === -1) {
+    node.title = value
+  } else {
+    node.title = value.substring(0, lastIndex)
+    node.resourceId = value.substring(lastIndex)
+  }
+  return node
+}
+
+function transformLinesToTree(linesInfo) {
   var curLevel = 0
   var root = []
   var curNode = null
   var queue = []
 
+  function pushChild(curLevel, lineInfo) {
+    curLevel.node.children = curLevel.node.children || []
+    curLevel.node.children.push(lineInfo.node)
+  }
+
   linesInfo.forEach(lineInfo => {
+    lineInfo.node = wraplineIntoNode(lineInfo)
     if (lineInfo.indent === 0) {
-      root.push(lineInfo)
+      root.push(lineInfo.node)
     } else if (lineInfo.indent <= curNode.indent) {
       while ((curLevel = queue.pop()) && lineInfo.indent <= curLevel.indent) {
       }
       queue.push(curLevel)
-      curLevel.children = curLevel.children || []
-      curLevel.children.push(lineInfo)
+      pushChild(curLevel, lineInfo)
     } else if (lineInfo.indent > curNode.indent) {
-      curNode.children = curNode.children || []
-      curNode.children.push(lineInfo)
+      pushChild(curNode, lineInfo)
     }
     curNode = lineInfo
     queue.push(lineInfo)
@@ -85,8 +104,7 @@ function markLevelForLines(linesInfo) {
 function catalogParser(text, options) {
   var lines = text.split('\n')
   var linesInfo = parseLines(lines)
-  console.log(linesInfo)
-  return markLevelForLines(linesInfo)
+  return transformLinesToTree(linesInfo)
 }
 
 module.exports = catalogParser

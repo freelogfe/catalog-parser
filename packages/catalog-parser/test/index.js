@@ -8,11 +8,9 @@ require('should')
 describe('catalog parser testcase', function () {
   const dirname = __dirname
   it('test right case', function () {
-    const rightDir = fs.readFileSync(path.join(dirname, 'fixtures/right-catalog')).toString()
+    const rightDir = fs.readFileSync(path.join(dirname, 'fixtures/widget-catalog')).toString()
     var result = parser(rightDir)
-    console.log(JSON.stringify(result, null, 2))
-    fs.writeFileSync('./catalog.json', JSON.stringify(result, null, 2))
-    // result.should.have.length(15)
+    result.should.have.length(6)
   })
 
   it('test error case', function () {
@@ -20,7 +18,7 @@ describe('catalog parser testcase', function () {
     try {
       parser(errorDir)
     } catch (e) {
-      // assert.ok(e.message.indexOf('error indent') > -1)
+      assert.ok(e.message.indexOf('error indent') > -1)
     }
   })
 })
