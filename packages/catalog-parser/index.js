@@ -65,8 +65,14 @@ function wraplineIntoNode(line) {
   if (lastIndex === -1) {
     node.title = value
   } else {
-    node.title = value.substring(0, lastIndex)
-    node.resourceId = value.substring(lastIndex)
+    node.title = value.substring(0, lastIndex).trim()
+    let resourceId = value.substring(lastIndex + 1).trim()
+    let reg = /<(\w+)>/
+    if (reg.test(resourceId)) {
+      resourceId = reg.exec(resourceId)[1]
+      node.nested = true
+    }
+    node.resourceId = resourceId
   }
   return node
 }
